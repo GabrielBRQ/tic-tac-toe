@@ -1,0 +1,114 @@
+@font-face {
+    font-family: roboto;
+    src: url(fonts/Roboto/Roboto-Regular.ttf);
+}
+
+@font-face {
+    font-family: robotoThin;
+    src: url(fonts/Roboto/Roboto-Thin.ttf);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+body{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header{
+    display: flex;
+    font-size: 7vh;
+    font-family: robotoThin;
+    padding-top: 1vh;
+}
+
+header p:first-child{
+    color: blue;
+    font-weight: bold;
+    font-family: roboto;
+}
+
+header p:last-child{
+    color: red;
+    font-weight: bold;
+    font-family: roboto;
+}
+
+.game-background{
+    background-color: rgb(216, 217, 223);
+    width: 100vw;
+    height: 70vh;
+    display: flex;
+    justify-content: space-around;
+}
+
+.title{
+    font-family: robotoThin;
+    font-size: 5vh;
+}
+
+.playerOne,
+.playerTwo{
+    display: grid;
+    align-items: center;
+    justify-content: center;
+}
+
+.playerOne .symbol{
+    font-family: roboto;
+    color: blue;
+    font-size: 40vh;
+}
+
+.playerTwo .symbol{
+    font-family: roboto;
+    color: red;
+    font-size: 40vh;
+}
+
+.gameboard{
+    display: grid;
+    grid-template-columns: repeat(3, 20vh);
+    grid-template-rows: repeat(3, 20vh);
+    justify-content: center;
+    align-content: center;
+    column-gap: 1vh;
+    row-gap: 1vh;
+    height: 70vh;
+}
+
+.cell{
+    height: 20vh;
+    width: 20vh;
+    background-color: rgb(200, 201, 207);
+    border-right: 1vh solid black;
+    border-bottom: 1vh solid black;
+    margin-left: 1vh;
+}
+
+.no-R{
+    border-right: none;
+}
+
+.no-B{
+    border-bottom: none;
+}
+
+footer{
+    display: flex;
+    align-items: center;
+    font-size: 3vh;
+    padding-bottom: 1vh;
+    gap:1vh;
+}
+
+footer img{
+    height: 7vh;
+}
