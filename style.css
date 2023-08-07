@@ -54,6 +54,61 @@ header p:last-child{
     font-size: 5vh;
 }
 
+.menu{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 80vh;
+    background-color: transparent;
+    backdrop-filter: blur(8px);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5vh;
+}
+
+.results,
+.pick-div{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 80vh;
+    background-color: transparent;
+    backdrop-filter: blur(8px);
+    z-index: 1;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5vh;
+}
+
+.menu-title,
+.results-title{
+    font-family: roboto;
+    font-size: 5vh;
+}
+
+.buttons-div{
+    display: flex;
+    gap: 5vh;
+}
+
+.buttons-div button{
+    border: none;
+    font-size: 2vh;
+    font-family: roboto;
+    font-weight: bold;
+    padding: 1vh 3vh 1vh 3vh;
+    width: 20vh;
+}
+
 .playerOne,
 .playerTwo{
     display: grid;
@@ -91,6 +146,31 @@ header p:last-child{
     border-right: 1vh solid black;
     border-bottom: 1vh solid black;
     margin-left: 1vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blue-text {
+    color: blue;
+    font-size: 10vh;
+    font-family: roboto;
+}
+
+.red-text {
+    color: red;
+    font-size: 10vh;
+    font-family: roboto;
+}
+
+.grayscale {
+    filter: grayscale(100%);
+    transform: scale(0.8);
+    opacity: 0.2;
+}
+
+.grayscale, .remove {
+    transition: all 0.3s ease-in-out;
 }
 
 .no-R{
