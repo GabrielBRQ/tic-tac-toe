@@ -1,6 +1,7 @@
 let playerOneAgainstAI;
 let AI;
 
+//Game infos to use
 const game = {
     rounds: 1,
     onePlayerGame: true,
@@ -15,11 +16,12 @@ var gameBoard = {
     3: { 1: '', 2: '', 3: '' }
 };
 
+
 const playerOne = playGame("X");
 const playerTwo = playGame("O");
 
+//Factory function to create symbol and play game
 function playGame(symbol) {
-
     function placeSymbol() {
         // Add symbol to div and gameboard
         if(this.textContent.trim() === ''){
@@ -84,12 +86,14 @@ function checkWinner() {
 }
 
 
+//Function to setUp divs and place symbols
 const cellDivs = document.querySelectorAll('.cell');
-
 function setupCellDivs() {
     cellDivs.forEach(function(div) {
         div.addEventListener('click', function() {
-            if(div.textContent.trim() === ''){
+            if(div.textContent.trim() === '' && game.AIPlayed == false){
+                game.AIPlayed = true;
+                //check if you are playing alone or not, to put a symbol
                 if (!game.onePlayerGame) {
                     if (game.rounds % 2 === 0) {
                         playerTwo.placeSymbol.call(this);
@@ -97,6 +101,7 @@ function setupCellDivs() {
                         playerOne.placeSymbol.call(this);
                     }
                 } else {
+                    //Test if you are available to play
                     if (game.rounds % 2 === 0) {
                         if(playerOneAgainstAI.symbol == "O"){
                             playerOneAgainstAI.placeSymbol.call(this);
@@ -108,20 +113,20 @@ function setupCellDivs() {
                     }
                 }
                 
+                //If nobody won, AI can play
                 let winner = checkWinner();
                 if (winner == 'X' || winner == 'O' || winner == 'draw') {
                     showResult(winner);
                 }
                 if(game.onePlayerGame){
-                    if(winner == null && game.AIPlayed == false){
-
+                    if(winner == null){
                         setTimeout(function() {
                             AIMove(game.difficulty);
                             winner = checkWinner();
                             if (winner == 'X' || winner == 'O' || winner == 'draw') {
                                 showResult(winner);
                             }
-                            game.AIPlayed = false;
+                            game.AIPlayed = false;      
                         }, 1000);
                     }
                 }
@@ -131,6 +136,7 @@ function setupCellDivs() {
     });
 }
 
+// Show the winner in the results div
 function showResult(winnerSymbol) {
     const resultsTitle = document.querySelector('.results-title');
     if (winnerSymbol === 'X') {
@@ -150,6 +156,7 @@ document.querySelectorAll('.symbol').forEach((symbol) => {
 function resetGame(){
         // Reset game
         game.rounds = 1;
+        game.AIPlayed = false; 
 
         // Clear divs e class
         cellDivs.forEach(function(div) {
@@ -171,7 +178,7 @@ function resetGame(){
 }
 
 
-
+// Here are all the buttons we need.
 function setupButtons() {
     const replayButton = document.querySelector('.replay');
     const changeModeButton = document.querySelector('.change-mode');
@@ -211,17 +218,20 @@ function setupButtons() {
         document.querySelector('.menu').style.display = 'none';
     });
 
+    // Start one player game with X symbol
     symbolX.addEventListener("click", function() {
         document.querySelector('.pick-div').style.display = 'none';
         startGameAgainstAI('X', 'O');
     });
     
+    // Start one player game with O symbol
     symbolO.addEventListener("click", function() {
         document.querySelector('.pick-div').style.display = 'none';
         startGameAgainstAI('O', 'X');
         AIMove(game.difficulty);
     });
 
+    // The 3 difficulties
     easyButton.addEventListener("click", function() {
         document.querySelector('.pick-div').style.display = 'flex';
         document.querySelector('.difficulty').style.display = 'none';
@@ -242,7 +252,7 @@ function setupButtons() {
 }
 
 
-
+// Create objects to one player game
 function startGameAgainstAI(playerSymbol, botSymbol) {
     playerOneAgainstAI = playGame(playerSymbol);
     AI = playGame(botSymbol);
@@ -250,18 +260,24 @@ function startGameAgainstAI(playerSymbol, botSymbol) {
 
 
 function AIMove(difficulty) {
+    let missPlayPercentage = 10;
+
     if(difficulty == 'easy'){
-        playEasy();
+        playRandom();
     }
     else if (difficulty == 'medium') {
-        if(Math.floor(Math.random() * 10) < 3){
-            playEasy();
+        missPlayPercentage = 3;
+        if(Math.floor(Math.random() * 10) < missPlayPercentage){
+            playRandom();
         }else{
             bestMove();
         }
     }else if(difficulty == 'hard'){
+        missPlayPercentage = 1;
         if(game.rounds == 1 && AI.symbol == 'X'){
-            playEasy();
+            playRandom();
+        }else if(Math.floor(Math.random() * 10) < missPlayPercentage){
+            playRandom();
         }else{
             bestMove();
         }
@@ -269,7 +285,7 @@ function AIMove(difficulty) {
 
 };
 
-
+// Function to select the best movement according to the minimax function
 function bestMove(){
     let move;
     let bestScore = -Infinity;
@@ -308,6 +324,7 @@ let scores = {
     draw: 0
 }
 
+// A function based on selecting the best move for the AI, predicting the best move for the player
 function minimax(board, isMaximizing){
     let result = checkWinner();
     if(result !== null){
@@ -344,7 +361,8 @@ function minimax(board, isMaximizing){
     }
 }
 
-function playEasy() {
+// Function to AI place a symbol in a random div
+function playRandom() {
     const emptyCells = [];
     cellDivs.forEach(function(div) {
         if (div.textContent.trim() === '') {
