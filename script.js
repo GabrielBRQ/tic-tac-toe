@@ -6,6 +6,7 @@ const game = {
     onePlayerGame: true,
     AIPlayed: false,
     difficulty: 'easy',
+    depth: 0
 }
 
 var gameBoard = {
@@ -39,6 +40,8 @@ function playGame(symbol) {
     };
 }
 
+
+
 function checkWinner() {
     const winCombinations = [
         // Row wins
@@ -54,6 +57,7 @@ function checkWinner() {
         [gameBoard[1][3], gameBoard[2][2], gameBoard[3][1]],
     ];
 
+
     // Verify all combinations
     for (const combination of winCombinations) {
         const [a, b, c] = combination;
@@ -62,7 +66,17 @@ function checkWinner() {
         }
     }
     
-    if (game.rounds == 10){
+    let isBoardFull = true;
+    for (const row in gameBoard) {
+        for (const column in gameBoard[row]) {
+            if (gameBoard[row][column] === '') {
+                isBoardFull = false;
+                break;
+            }
+        }
+    }
+
+    if (isBoardFull) {
         return 'draw';
     }
 
@@ -100,7 +114,7 @@ function setupCellDivs() {
                 }
                 if(game.onePlayerGame){
                     if(winner == null && game.AIPlayed == false){
-                        game.AIPlayed = true;
+
                         setTimeout(function() {
                             AIMove(game.difficulty);
                             winner = checkWinner();
@@ -133,19 +147,6 @@ document.querySelectorAll('.symbol').forEach((symbol) => {
     symbol.classList.add('remove');
 });
 
-
-// Function to start when the DOM content is loaded
-document.addEventListener("DOMContentLoaded", function () {
-    var twoPlayerButton = document.querySelector('.menu button:last-child');
-  
-    // Start two player mode
-    twoPlayerButton.addEventListener("click", function () {
-        game.onePlayerGame = false;
-        document.querySelector('.menu').style.display = 'none';
-    });
-});
-
-
 function resetGame(){
         // Reset game
         game.rounds = 1;
@@ -175,38 +176,72 @@ function setupButtons() {
     const replayButton = document.querySelector('.replay');
     const changeModeButton = document.querySelector('.change-mode');
     const onePlayerButton = document.querySelector('.buttons-div button:first-child');
+    const twoPlayerButton = document.querySelector('.menu button:last-child');
+    const symbolX = document.querySelector('.X');
+    const symbolO = document.querySelector('.O');
+    const easyButton = document.querySelector('.easy');
+    const mediumButton = document.querySelector('.medium');
+    const hardButton = document.querySelector('.hard');
+    
     
     // Reset game when clicked
-    replayButton.addEventListener('click', resetGame);
+    replayButton.addEventListener('click', function(){
+        resetGame();
+        if(game.onePlayerGame == true && AI.symbol == "X"){
+            AIMove(game.difficulty);
+        }
+    });
 
-    // Reset game and menu div is shown
+    // Reset game and show menu div
     changeModeButton.addEventListener('click', function() {
         resetGame();
         document.querySelector('.menu').style.display = 'flex';
     });
     
-    // Go to Pick div
+    // Go to select difficulty
     onePlayerButton.addEventListener("click", function() {
         game.onePlayerGame = true;
         document.querySelector('.menu').style.display = 'none';
+        document.querySelector('.difficulty').style.display = 'flex';
+    });
+
+    // Start two player game
+    twoPlayerButton.addEventListener("click", function () {
+        game.onePlayerGame = false;
+        document.querySelector('.menu').style.display = 'none';
+    });
+
+    symbolX.addEventListener("click", function() {
+        document.querySelector('.pick-div').style.display = 'none';
+        startGameAgainstAI('X', 'O');
+    });
+    
+    symbolO.addEventListener("click", function() {
+        document.querySelector('.pick-div').style.display = 'none';
+        startGameAgainstAI('O', 'X');
+        AIMove(game.difficulty);
+    });
+
+    easyButton.addEventListener("click", function() {
         document.querySelector('.pick-div').style.display = 'flex';
+        document.querySelector('.difficulty').style.display = 'none';
+        game.difficulty = 'easy';
+    });
+
+    mediumButton.addEventListener("click", function() {
+        document.querySelector('.pick-div').style.display = 'flex';
+        document.querySelector('.difficulty').style.display = 'none';
+        game.difficulty = 'medium';
+    });
+
+    hardButton.addEventListener("click", function() {
+        document.querySelector('.pick-div').style.display = 'flex';
+        document.querySelector('.difficulty').style.display = 'none';
+        game.difficulty = 'hard';
     });
 }
 
 
-const symbolX = document.querySelector('.X');
-const symbolO = document.querySelector('.O');
-
-symbolX.addEventListener("click", function() {
-    document.querySelector('.pick-div').style.display = 'none';
-    startGameAgainstAI('X', 'O');
-});
-
-symbolO.addEventListener("click", function() {
-    document.querySelector('.pick-div').style.display = 'none';
-    startGameAgainstAI('O', 'X');
-    AIMove(game.difficulty);
-});
 
 function startGameAgainstAI(playerSymbol, botSymbol) {
     playerOneAgainstAI = playGame(playerSymbol);
@@ -215,31 +250,114 @@ function startGameAgainstAI(playerSymbol, botSymbol) {
 
 
 function AIMove(difficulty) {
-    const emptyCells = getEmptyCells();
     if(difficulty == 'easy'){
-        const randomIndex = Math.floor(Math.random() * emptyCells.length);
-        const randomCell = emptyCells[randomIndex]; 
-        const row = randomCell.dataset.row;
-        const col = randomCell.dataset.col;
-    
-        AI.placeSymbol.call(randomCell); 
-        gameBoard[row][col] = AI.symbol;
-    }else if(difficulty == 'medium'){
-
-    }else {
-        
+        playEasy();
+    }
+    else if (difficulty == 'medium') {
+        if(Math.floor(Math.random() * 10) < 3){
+            playEasy();
+        }else{
+            bestMove();
+        }
+    }else if(difficulty == 'hard'){
+        if(game.rounds == 1 && AI.symbol == 'X'){
+            playEasy();
+        }else{
+            bestMove();
+        }
     }
 
 };
 
-function getEmptyCells() {
+
+function bestMove(){
+    let move;
+    let bestScore = -Infinity;
+    let score;
+    let bestDepth= Infinity;
+    for (const row in gameBoard) {
+        for (const column in gameBoard[row]) {
+            if (gameBoard[row][column] === '') {
+                gameBoard[row][column] = AI.symbol;
+                if(AI.symbol == 'O'){
+                    scores.O = 1;
+                    scores.X = -1;
+                }else{
+                    scores.O = -1;
+                    scores.X = 1;   
+                }
+                score = minimax(gameBoard, false);
+                gameBoard[row][column] = '';
+                if(score > bestScore || score == bestScore && game.depth < bestDepth){
+                    bestScore = score;
+                    bestDepth = game.depth;
+                    game.depth = 0;
+                    move = {row, column}
+                }
+            }
+        }
+    }
+    const newMove = document.querySelector(`[data-row='${move.row}'][data-col='${move.column}']`);
+    AI.placeSymbol.call(newMove);
+    gameBoard[move.row][move.column] = AI.symbol;
+}
+
+let scores = {
+    X: 1,
+    O: -1,
+    draw: 0
+}
+
+function minimax(board, isMaximizing){
+    let result = checkWinner();
+    if(result !== null){
+        return scores[result];
+    }
+    if(isMaximizing){
+        let bestScore = -Infinity;
+        for (const row in board) {
+            for (const column in board[row]) {
+                if (board[row][column] === '') {
+                    game.depth++;
+                    board[row][column] = AI.symbol;
+                    let score = minimax(board, false);
+                    board[row][column] = '';
+                    bestScore = (score > bestScore) ? score : bestScore;
+                }
+            }
+        }   
+        return bestScore;
+    }else{
+        let bestScore = Infinity;
+        for (const row in board) {
+            for (const column in board[row]) {
+                if (board[row][column] === '') {
+                    game.depth++;
+                    board[row][column] = playerOneAgainstAI.symbol;
+                    let score = minimax(board, true);
+                    board[row][column] = '';
+                    bestScore = (score < bestScore) ? score : bestScore;
+                }
+            }
+        }   
+        return bestScore;
+    }
+}
+
+function playEasy() {
     const emptyCells = [];
     cellDivs.forEach(function(div) {
         if (div.textContent.trim() === '') {
             emptyCells.push(div);
         }
     });
-    return emptyCells;
+    const randomIndex = Math.floor(Math.random() * emptyCells.length);
+    const randomCell = emptyCells[randomIndex]; 
+    const row = randomCell.dataset.row;
+    const col = randomCell.dataset.col;
+
+    AI.placeSymbol.call(randomCell); 
+    gameBoard[row][col] = AI.symbol;
 }
 
 function changeStyle(){
