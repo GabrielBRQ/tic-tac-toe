@@ -97,8 +97,10 @@ function setupCellDivs() {
                 if (!game.onePlayerGame) {
                     if (game.rounds % 2 === 0) {
                         playerTwo.placeSymbol.call(this);
+                        game.AIPlayed = false;
                     } else {
                         playerOne.placeSymbol.call(this);
+                        game.AIPlayed = false;
                     }
                 } else {
                     //Test if you are available to play
@@ -214,6 +216,7 @@ function setupButtons() {
 
     // Start two player game
     twoPlayerButton.addEventListener("click", function () {
+        game.AIPlayed == false
         game.onePlayerGame = false;
         document.querySelector('.menu').style.display = 'none';
     });
