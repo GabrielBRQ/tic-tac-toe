@@ -393,6 +393,25 @@ function changeStyle(){
     }
 }
 
+function updateTextBasedOnScreenWidth() {
+    var screenWidth = window.innerWidth;
+
+    var titlePlayerOne = document.querySelector('.playerOne .title');
+    var titlePlayerTwo = document.querySelector('.playerTwo .title');
+
+    if (screenWidth <= 950) {
+        titlePlayerOne.textContent = "P1";
+        titlePlayerTwo.textContent = "P2";
+    } else {
+        titlePlayerOne.textContent = "Player One";
+        titlePlayerTwo.textContent = "Player Two";
+    }
+}
+
+updateTextBasedOnScreenWidth();
+
+window.addEventListener('resize', updateTextBasedOnScreenWidth);
+
 
 document.addEventListener("DOMContentLoaded", function () {
     setupButtons();

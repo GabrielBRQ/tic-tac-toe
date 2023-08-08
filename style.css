@@ -115,6 +115,7 @@ header p:last-child{
     display: grid;
     align-items: center;
     justify-content: center;
+    justify-items: center;
 }
 
 .playerOne .symbol{
@@ -132,12 +133,12 @@ header p:last-child{
 .gameboard{
     display: grid;
     grid-template-columns: repeat(3, 20vh);
-    grid-template-rows: repeat(3, 20vh);
+    grid-template-rows: repeat(3, 20vh); 
     justify-content: center;
     align-content: center;
+    height: 70vh;
     column-gap: 1vh;
     row-gap: 1vh;
-    height: 70vh;
 }
 
 .cell{
@@ -150,6 +151,7 @@ header p:last-child{
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 5vw;
 }
 
 .blue-text {
@@ -192,4 +194,47 @@ footer{
 
 footer img{
     height: 7vh;
+}
+
+@media only screen and (max-width:950px){
+    header{
+        font-size: 5vh;
+    }
+    
+    .gameboard{
+        grid-template-columns: repeat(3, 22vw);
+        grid-template-rows: repeat(3, 22vw); 
+        column-gap: 1vh;
+        row-gap: 1vh;
+    }
+
+    .cell{
+        height: 22vw;
+        width: 22vw;
+    }
+
+    .title{
+        font-size: 2vh;
+    }
+
+    .playerOne,
+    .playerTwo
+    {
+        justify-items: center;
+        grid-template-rows: 10% 20%;
+    }
+    
+    .menu-title{
+        text-align: center;
+    }
+
+    .playerOne .symbol,
+    .playerTwo .symbol
+    {
+        font-size: 7vh;
+    }
+
+    .buttons-div button{
+        width: auto;
+    }
 }
